@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Navbar from "@/components/Navbar";
+
 
 const Prompts = () => {
   const [customPrompt, setCustomPrompt] = useState("");
@@ -75,10 +75,7 @@ const Prompts = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <main className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">AI Prompt Analysis</h1>
@@ -244,7 +241,6 @@ const Prompts = () => {
             </Card>
           </div>
         </div>
-      </main>
     </div>
   );
 };

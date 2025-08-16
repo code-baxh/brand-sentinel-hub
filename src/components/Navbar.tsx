@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Brain, BarChart3, Lightbulb, TrendingUp, User, LogOut, Menu, X } from "lucide-react";
+import { Brain, BarChart3, Lightbulb, TrendingUp, User, LogOut, Menu, X, Settings, Moon, Sun, Monitor, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu, 
@@ -11,12 +11,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/components/ThemeProvider";
+import { useAppContext } from "@/context/AppContext";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
+  const { navigationStyle, toggleNavigationStyle } = useAppContext();
   
   const userEmail = localStorage.getItem("userEmail") || "user@example.com";
   const userInitials = userEmail.split("@")[0].substring(0, 2).toUpperCase();
@@ -37,6 +41,23 @@ const Navbar = () => {
     { name: "Prompts", path: "/prompts", icon: <Lightbulb className="h-4 w-4" /> },
     { name: "Insights", path: "/insights", icon: <TrendingUp className="h-4 w-4" /> },
   ];
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'dark':
+        return <Moon className="h-4 w-4" />;
+      case 'light':
+        return <Sun className="h-4 w-4" />;
+      default:
+        return <Monitor className="h-4 w-4" />;
+    }
+  };
+
+  const cycleTheme = () => {
+    if (theme === 'light') setTheme('dark');
+    else if (theme === 'dark') setTheme('system');
+    else setTheme('light');
+  };
 
   const isActivePath = (path: string) => location.pathname === path;
 
@@ -71,6 +92,26 @@ const Navbar = () => {
             ))}
           </div>
 
+          {/* Theme & Navigation Controls */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={cycleTheme}
+              className="h-9 w-9 p-0"
+            >
+              {getThemeIcon()}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleNavigationStyle}
+              className="h-9 w-9 p-0"
+            >
+              <Layout className="h-4 w-4" />
+            </Button>
+          </div>
+
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             <DropdownMenu>
@@ -87,13 +128,23 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <TrendingUp className="mr-2 h-4 w-4" />
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                  <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={cycleTheme} className="md:hidden">
+                  {getThemeIcon()}
+                  <span className="ml-2">
+                    {theme === 'light' ? 'Dark mode' : theme === 'dark' ? 'System' : 'Light mode'}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={toggleNavigationStyle} className="md:hidden">
+                  <Layout className="mr-2 h-4 w-4" />
+                  <span>{navigationStyle === 'top' ? 'Sidebar' : 'Top nav'}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-destructive">
